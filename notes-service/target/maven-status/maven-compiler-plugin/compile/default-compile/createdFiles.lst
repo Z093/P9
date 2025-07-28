@@ -1,0 +1,6 @@
+com/example/notesservice/config/SecurityConfig.class
+com/example/notesservice/repository/NoteRepository.class
+com/example/notesservice/controller/NoteController.class
+com/example/notesservice/NotesServiceApplication.class
+com/example/notesservice/model/Note.class
+com/example/notesservice/service/NoteService.class

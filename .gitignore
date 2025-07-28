@@ -1,0 +1,20 @@
+# Fichiers générés par Java
+/target/
+*.class
+
+# Base de données MongoDB
+src/main/resources/data/db/
+
+# Configuration IDE
+.idea/
+*.iml
+
+# Système
+.DS_Store
+
+# Autres
+*.log
+*.lock
+*.wt
+*.turtle
+*.bson

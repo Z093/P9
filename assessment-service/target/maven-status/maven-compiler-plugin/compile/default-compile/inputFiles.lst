@@ -1,0 +1,8 @@
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/AssessmentServiceApplication.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/config/RestTemplateConfig.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/config/SecurityConfig.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/controller/AssessmentController.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/dto/NoteDto.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/dto/PatientDto.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/model/AssessmentResult.java
+/Users/ibenhamouda/Desktop/Projet 9/assessment-service/src/main/java/com/example/assessmentservice/service/AssessmentService.java

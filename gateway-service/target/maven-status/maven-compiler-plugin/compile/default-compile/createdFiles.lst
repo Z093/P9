@@ -1,0 +1,3 @@
+com/example/gatewayservice/GatewayServiceApplication.class
+com/example/gatewayservice/config/SecurityConfig.class
+com/example/gatewayservice/config/CorsGlobalConfig.class

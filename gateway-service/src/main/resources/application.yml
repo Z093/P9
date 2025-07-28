@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        - id: patient-route
+          uri: http://patient-service:8082
+          predicates:
+            - Path=/patient/**
+          filters:
+            - RewritePath=/patient/(?<segment>.*), /patient/${segment}
+
+        - id: notes-route
+          uri: http://notes-service:8083
+          predicates:
+            - Path=/notes/**
+          filters:
+            - RewritePath=/notes/(?<segment>.*), /notes/${segment}
+
+        - id: assessment-route
+          uri: http://assessment-service:8084
+          predicates:
+            - Path=/assess/**
+          filters:
+            - RewritePath=/assess/(?<segment>.*), /assess/${segment}
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

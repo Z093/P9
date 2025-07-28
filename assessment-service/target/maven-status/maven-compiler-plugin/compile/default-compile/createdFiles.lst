@@ -1,0 +1,8 @@
+com/example/assessmentservice/service/AssessmentService.class
+com/example/assessmentservice/config/RestTemplateConfig.class
+com/example/assessmentservice/config/SecurityConfig.class
+com/example/assessmentservice/dto/PatientDto.class
+com/example/assessmentservice/controller/AssessmentController.class
+com/example/assessmentservice/AssessmentServiceApplication.class
+com/example/assessmentservice/dto/NoteDto.class
+com/example/assessmentservice/model/AssessmentResult.class

@@ -70,7 +70,7 @@
   padding-top: 12px;
   padding-bottom: 2rem;
   background-color: white;
-  height: 80vh;
+  min-height: calc(100vh - 100px);
   width: 125vh;
   box-sizing: border-box;
 }

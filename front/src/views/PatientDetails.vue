@@ -6,13 +6,15 @@
         <li><strong>ID :</strong> {{ patient.id }}</li>
         <li><strong>Prénom :</strong> {{ patient.firstName }}</li>
         <li><strong>Nom :</strong> {{ patient.lastName }}</li>
-        <li><strong>Date de naissance :</strong> {{ patient.dateOfBirth }}</li>
+        <li><strong>Date de naissance :</strong> {{ formatDate(patient.dateOfBirth) }}</li>
         <li><strong>Sexe :</strong> {{ patient.gender === 'M' ? 'Homme' : 'Femme' }}</li>
         <li><strong>Téléphone :</strong> {{ patient.phoneNumber }}</li>
         <li><strong>Adresse :</strong> {{ patient.address }}</li>
       </ul>
 
-      <button @click="editingPatient = { ...patient }">✏️ Modifier le patient</button>
+      <button class="edit-btn" @click="goToEdit">
+        ✏️ Modifier le patient
+      </button>
 
       <div class="risk-box" v-if="riskLevel">
         <h3>🧪 Évaluation du risque :</h3>
@@ -22,51 +24,54 @@
       <div class="notes-box">
         <h3>📝 Notes médicales :</h3>
         <ul v-if="notes.length">
-          <li v-for="note in notes" :key="note.id">
-            <div v-if="editingNote && editingNote.id === note.id">
-              <textarea v-model="editingNote.content"></textarea>
-              <button @click="updateNote()">💾 Sauvegarder</button>
-              <button @click="cancelEditNote">❌ Annuler</button>
+          <li
+              v-for="note in notes"
+              :key="note.id"
+              :class="{ editing: editingNote && editingNote.id === note.id }"
+          >
+            <!-- Mode édition : zone agrandie -->
+            <div v-if="editingNote && editingNote.id === note.id" class="note-editor">
+              <textarea
+                  v-model="editingNote.content"
+                  rows="12"
+                  placeholder="Éditez la note..."
+              ></textarea>
+
+              <div class="note-actions">
+                <button @click="updateNote()">💾 Sauvegarder</button>
+                <button @click="cancelEditNote">❌ Annuler</button>
+              </div>
             </div>
+
+            <!-- Mode lecture -->
             <div v-else>
               <p>{{ note.content }}</p>
-              <button @click="startEditNote(note)">✏️ Modifier</button>
-              <button @click="deleteNote(note.id)">🗑️ Supprimer</button>
+              <div class="note-actions">
+                <button @click="startEditNote(note)">✏️ Modifier</button>
+                <button @click="deleteNote(note.id)">🗑️ Supprimer</button>
+              </div>
             </div>
           </li>
         </ul>
+        <p v-else>Aucune note pour ce patient.</p>
       </div>
     </div>
 
-    <div v-if="editingPatient" class="edit-form">
-      <h3>Modifier le patient</h3>
-      <form @submit.prevent="updatePatient">
-        <input v-model="editingPatient.firstName" placeholder="Prénom" required />
-        <input v-model="editingPatient.lastName" placeholder="Nom" required />
-        <select v-model="editingPatient.gender" required>
-          <option value="M">M</option>
-          <option value="F">F</option>
-        </select>
-        <input v-model="editingPatient.dateOfBirth" type="date" required />
-        <input v-model="editingPatient.address" placeholder="Adresse" required />
-        <input v-model="editingPatient.phoneNumber" placeholder="Téléphone" required />
-        <button type="submit">💾 Enregistrer</button>
-        <button type="button" @click="editingPatient = null">❌ Annuler</button>
-      </form>
-    </div>
+    <p v-else>Chargement…</p>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
+
 const patient = ref(null)
 const notes = ref([])
 const riskLevel = ref(null)
-const editingPatient = ref(null)
 const editingNote = ref(null)
 
 onMounted(async () => {
@@ -103,22 +108,11 @@ const fetchRisk = async (id) => {
   }
 }
 
-const updatePatient = async () => {
-  try {
-    const id = editingPatient.value.id
-    await axios.put(`http://localhost:8080/patient/${id}`, editingPatient.value)
-    editingPatient.value = null
-    await fetchPatient(id)
-  } catch (e) {
-    console.error('❌ Échec mise à jour patient:', e)
-  }
-}
-
 const startEditNote = (note) => {
   editingNote.value = {
     id: note.id,
     content: note.content,
-    patientId: patient.value.id // 👈 nécessaire pour l'update backend
+    patientId: patient.value.id // requis pour backend
   }
 }
 
@@ -138,7 +132,7 @@ const updateNote = async () => {
 }
 
 const deleteNote = async (id) => {
-  console.log("📌 Tentative de suppression de la note ID:", id) // <--- ici
+  console.log("📌 Tentative de suppression de la note ID:", id)
   if (!confirm('Supprimer cette note ?')) return
   try {
     await axios.delete(`http://localhost:8080/notes/${id}`)
@@ -147,12 +141,28 @@ const deleteNote = async (id) => {
     console.error('❌ Erreur suppression note:', e)
   }
 }
+
+const goToEdit = () => {
+  router.push(`/patient/${route.params.id}/edit`)
+}
+
+const formatDate = (value) => {
+  if (!value) return ''
+  const d = new Date(value)
+  if (isNaN(d)) return value
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const yyyy = d.getFullYear()
+  return `${dd}/${mm}/${yyyy}`
+}
 </script>
 
 <style scoped>
 .content-container {
-  padding-top: 200px;
+  padding-top: 100px;
+  min-height: 500px;
 }
+
 .details-wrapper {
   background-color: white;
   padding: 2rem;
@@ -161,11 +171,24 @@ const deleteNote = async (id) => {
   max-width: 600px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+
+.edit-btn {
+  margin-top: 1rem;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  padding: .6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.edit-btn:hover { opacity: .9; }
+
 .risk-box {
   margin-top: 2rem;
   border-top: 1px solid #ccc;
   padding-top: 1rem;
 }
+
 .notes-box {
   margin-top: 2rem;
   border-top: 1px solid #ccc;
@@ -177,11 +200,42 @@ const deleteNote = async (id) => {
   padding: 0.5rem;
   border-radius: 5px;
 }
-.edit-form {
-  background: #f9f9f9;
+
+
+
+
+.notes-box li.editing {
+  background: #ffffff;
   padding: 1rem;
-  margin-top: 2rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+
+.note-editor textarea {
+  width: 100%;
+  min-height: 220px;
+  padding: 0.75rem;
+  border: 1px solid #bbb;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  box-sizing: border-box;
+  line-height: 1.5;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+
+.note-actions {
+  display: flex;
+  gap: .5rem;
+  margin-top: .5rem;
+  justify-content: flex-end;
 }
 </style>

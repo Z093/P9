@@ -132,16 +132,7 @@ P9/
 - Validation manuelle avec Postman (patients, notes, assessment).
 
 
-## 🌿 Pistes Green Code
-- **Pagination** et **filtrage** côté API pour limiter les charges.
-- Logs en prod au niveau `WARN/ERROR`, pas de traces verbeuses.
-- Images Docker **slim**, **layer caching**, multi-stage builds.
-- **Time-outs** et **pooling** raisonnés côté HTTP clients.
-- Réduire JS/CSS côté front, activer **caching**.
-
 ## 📦 Prérequis
 - Git, Docker + Docker Compose
 - Java 17+ (si build local), Node.js 18+ (front)
 
-## 📄 Licence
-Voir `LICENSE` si présent dans le dépôt.

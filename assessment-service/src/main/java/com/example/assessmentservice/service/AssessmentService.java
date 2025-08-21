@@ -56,31 +56,42 @@ public class AssessmentService {
                 }
             }
         }
+        System.out.println("[DEBUG] Total triggers: " + count); // Pour vérifier
         return count;
     }
+
 
     private String evaluateRisk(PatientDto patient, int count) {
         int age = patient.getAge();
         String gender = patient.getGender();
 
+        // 1. Aucun déclencheur → "None"
         if (count == 0) return "None";
-        if (count >= 2 && count <= 5 && age > 30) return "Borderline";
 
+        // 2. Borderline (âge > 30 et 2-5 déclencheurs) → doit être prioritaire !
+        if (age > 30 && count >= 2 && count <= 5) return "Borderline";
+
+        // 3. Early onset (cas extrêmes)
         if (age <= 30) {
-            if ("M".equalsIgnoreCase(gender)) {
-                if (count >= 3 && count < 5) return "In Danger";
-                if (count >= 5) return "Early onset";
-            } else {
-                if (count >= 4 && count < 7) return "In Danger";
-                if (count >= 7) return "Early onset";
-            }
+            if ("M".equalsIgnoreCase(gender) && count >= 5) return "Early onset";
+            if ("F".equalsIgnoreCase(gender) && count >= 7) return "Early onset";
         } else {
-            if (count >= 6 && count < 8) return "In Danger";
             if (count >= 8) return "Early onset";
         }
 
+        // 4. In Danger
+        if (age <= 30) {
+            if ("M".equalsIgnoreCase(gender) && count >= 3) return "In Danger";
+            if ("F".equalsIgnoreCase(gender) && count >= 4) return "In Danger";
+        } else {
+            if (count >= 6) return "In Danger";
+        }
+
+        // 5. Sinon "None"
         return "None";
+
     }
+
 
 
     // Supprime les accents et met en minuscule

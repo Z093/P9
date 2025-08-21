@@ -59,20 +59,32 @@ public class AssessmentServiceTest {
 
     @Test
     void testAssessRisk_borderline() {
-        PatientDto patient = createPatient(2, "F", "1975-03-10"); // Âge > 30
+        PatientDto patient = createPatient(2, "M", "1945-06-24");
         NoteDto[] notes = {
-                createNote("Fumeuse depuis 5 ans."),
-                createNote("cholesterol élevé."),
-                createNote("Vertiges légers.")
+                createNote("Le patient déclare qu'il ressent beaucoup de stress au travail Il se plaint également que son audition est anormale dernièrement"),
+                createNote("Le patient déclare avoir fait une réaction aux médicaments au cours des 3 derniers mois Il remarque également que son audition continue d'être anormale"),
         };
+
+        // Debug 1 : Afficher l'âge calculé
+        System.out.println("[DEBUG] Âge du patient : " + patient.getAge()); // Doit être 78 (2023 - 1945)
+
+        // Debug 2 : Afficher les notes analysées
+        System.out.println("[DEBUG] Notes du patient :");
+        for (NoteDto note : notes) {
+            System.out.println("- " + note.getContent());
+        }
 
         when(restTemplate.getForObject("http://patient-service:8082/patient/2", PatientDto.class)).thenReturn(patient);
         when(restTemplate.getForObject("http://notes-service:8083/notes/patient/2", NoteDto[].class)).thenReturn(notes);
 
         AssessmentResult result = assessmentService.assessRisk(2);
 
+        // Debug 3 : Afficher le résultat obtenu vs. attendu
+        System.out.println("[DEBUG] Risque calculé : " + result.getRiskLevel() + " | Risque attendu : Borderline");
+
         assertEquals("Borderline", result.getRiskLevel());
     }
+
 
     @Test
     void testAssessRisk_earlyOnset_maleUnder30() {
